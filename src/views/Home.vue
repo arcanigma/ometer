@@ -1,19 +1,18 @@
 <template>
     <div class="home">
-        <img alt="Vue logo" src="../assets/logo.png">
-        <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+        <Meter :start="10" :max="10" />
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue';
+    import { Component, Vue } from 'vue-property-decorator';
+    import Meter from '@/components/Meter.vue';
 
-@Component({
-    components: {
-        HelloWorld,
-    }
-})
+    @Component({
+        components: {
+            Meter
+        }
+    })
 
-export default class Home extends Vue {}
+    export default class extends Vue {}
 </script>
