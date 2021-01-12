@@ -1,5 +1,8 @@
 <template>
-    <div class="odometer" />
+    <div class="odometer" :style="{
+        '--title': `&quot;${title}&quot;`,
+        '--color': color
+    }" />
 </template>
 
 <script lang="ts">
@@ -8,9 +11,12 @@
     import 'odometer/themes/odometer-theme-train-station.css';
 
     @Component export default class extends Vue {
-        @Prop() private start!: number;
+        @Prop() private title!: string;
+        @Prop() private color!: string;
         @Prop() private max!: number;
-        private current = this.start;
+        @Prop() private start!: number;
+
+        private current = this.start ?? this.max;
         private timer: number | undefined = undefined;
 
         mounted() {
@@ -36,9 +42,24 @@
 </script>
 
 <style>
+    .odometer .odometer-inside::before {
+        content: var(--title);
+        display: grid;
+    }
+
+    .odometer .odometer-inside .odometer-digit {
+        background-image: linear-gradient(to bottom,
+            #111 0%,
+            #000 35%,
+            #333 55%,
+            #111 55%,
+            var(--color) 100%
+        )
+    }
+
     .odometer {
         font-size: 5em;
-        padding: .05em .1em .1em .1em;
+        margin: 0.25em;
     }
 
     .odometer .odometer-inside .odometer-digit:first-child,
