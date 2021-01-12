@@ -14,10 +14,10 @@
         data() {
             return {
                 meters: [
-                    { title: "Ness", color: 'crimson', max: 90 },
-                    { title: "Paula", color: 'pink', max: 30 },
-                    { title: "Jeff", color: 'slategray', max: 60 },
-                    { title: "Poo", color: 'royalblue', max: 60, start: 40 }
+                    { title: "Realtime", max: 60 },
+                    { title: "Slow", rate: 2000, color: 'indigo', max: 30 },
+                    { title: "Fast", rate: 500, color: 'tomato', max: 120 },
+                    { title: "Defaults" }
                 ]
             }
         }

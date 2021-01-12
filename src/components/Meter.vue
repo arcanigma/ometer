@@ -1,30 +1,39 @@
 <template>
     <div class="odometer" :style="{
+        '--duration': `${rate}ms`,
         '--title': `&quot;${title}&quot;`,
         '--color': color
     }" />
 </template>
 
 <script lang="ts">
-    import { Component, Prop, Vue } from 'vue-property-decorator';
+    import Vue from 'vue';
     import Odometer from 'odometer';
     import 'odometer/themes/odometer-theme-train-station.css';
 
-    @Component export default class extends Vue {
-        @Prop() private title!: string;
-        @Prop() private color!: string;
-        @Prop() private max!: number;
-        @Prop() private start!: number;
+    export default Vue.extend({
+        props: {
+            title: { type: String, default: 'Counter' },
+            color: { type: String, default: '#111' },
+            rate: { type: Number, default: 1000 },
+            max: { type: Number, default: 999 },
+            start: { type: Number }
+        },
 
-        private current = this.start ?? this.max;
-        private timer: number | undefined = undefined;
+        data() {
+            return {
+                current: this.start ?? this.max,
+                timer: undefined as number | undefined,
+                anchor: 9000
+            };
+        },
 
         mounted() {
             const od = new Odometer({
                 el: this.$el,
-                value: this.current + 9000,
+                value: this.current + this.anchor,
                 format: '(,ddd)',
-                duration: 1000
+                duration: this.rate
             });
 
             this.timer = setInterval(() => {
@@ -34,16 +43,17 @@
                 }
                 else {
                     this.current--;
-                    od.update(this.current + 9000);
+                    od.update(this.current + this.anchor);
                 }
-            }, 1000);
+            }, this.rate);
         }
-    }
+    })
 </script>
 
 <style>
     .odometer .odometer-inside::before {
         content: var(--title);
+        font-size: .8em;
         display: grid;
     }
 
@@ -59,7 +69,7 @@
 
     .odometer {
         font-size: 5em;
-        margin: 0.25em;
+        margin: .25em;
     }
 
     .odometer .odometer-inside .odometer-digit:first-child,
@@ -68,10 +78,10 @@
     }
 
     .odometer-animating .odometer-ribbon-inner {
-        -webkit-transition-duration: 1000ms !important;
-        -moz-transition-duration: 1000ms !important;
-        -ms-transition-duration: 1000ms !important;
-        -o-transition-duration: 1000ms !important;
-        transition-duration: 1000ms !important;
+        -webkit-transition-duration: var(--duration) !important;
+        -moz-transition-duration: var(--duration) !important;
+        -ms-transition-duration: var(--duration) !important;
+        -o-transition-duration: var(--duration) !important;
+        transition-duration: var(--duration) !important;
     }
 </style>
