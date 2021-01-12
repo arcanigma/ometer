@@ -5,14 +5,11 @@ module.exports = {
         msTileColor: '#F98140',
         appleMobileWebAppCapable: 'yes',
         appleMobileWebAppStatusBarStyle: 'black',
-        workboxPluginMode: 'InjectManifest',
-        workboxOptions: {
-            swSrc: 'src/registerServiceWorker.ts',
-        }
+        workboxPluginMode: 'GenerateSW'
     },
     devServer: {
         watchOptions: {
             poll: true
-      }
+        }
     }
 }
