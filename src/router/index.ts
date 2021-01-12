@@ -11,10 +11,10 @@ const routes: Array<RouteConfig> = [
         component: Dashboard
     },
     // {
-    //     path: '/about',
-    //     name: 'About',
+    //     path: '/setup',
+    //     name: 'Setup',
     //     component: () => import(
-    //         /* webpackChunkName: "about" */ '../views/About.vue'
+    //         /* webpackChunkName: "setup" */ '../views/Setup.vue'
     //     )
     // }
 ];

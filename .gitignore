@@ -3,11 +3,3 @@ node_modules
 /src/**/*.js
 /src/**/*.js.map
 .netlify
-
-# .env.local
-# .env.*.local
-
-# npm-debug.log*
-# yarn-debug.log*
-# yarn-error.log*
-# pnpm-debug.log*
