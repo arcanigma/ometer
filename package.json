@@ -1,7 +1,7 @@
 {
     "name": "ometer",
     "version": "1.0.0",
-    "description": "Rolling odometer-style counters for gaming.",
+    "description": "Progressive web app for odometer-style counters.",
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
