@@ -15,24 +15,25 @@
         props: {
             title: { type: String, default: 'Counter' },
             color: { type: String, default: '#111' },
-            rate: { type: Number, default: 1000 },
-            max: { type: Number, default: 999 },
-            start: { type: Number }
+            max: { type: Number, default: 255, validator: it => it >= 1 },
+            start: { type: Number },
+            rate: { type: Number, default: 1000 }
         },
 
         data() {
             return {
                 current: this.start ?? this.max,
                 timer: undefined as number | undefined,
-                anchor: 9000
+                digits: Math.floor(Math.log10(this.max)) + 1,
+                offset: 10 ** (Math.floor(Math.log10(this.max)) + 1)
             };
         },
 
         mounted() {
             const od = new Odometer({
                 el: this.$el,
-                value: this.current + this.anchor,
-                format: '(,ddd)',
+                value: this.current + this.offset,
+                format: `(,${'d'.repeat(this.digits)})`,
                 duration: this.rate
             });
 
@@ -43,7 +44,7 @@
                 }
                 else {
                     this.current--;
-                    od.update(this.current + this.anchor);
+                    od.update(this.current + this.offset);
                 }
             }, this.rate);
         }

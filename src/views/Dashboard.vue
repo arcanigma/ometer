@@ -15,9 +15,10 @@
             return {
                 meters: [
                     { title: "Realtime", max: 60 },
-                    { title: "Slow", rate: 2000, color: 'indigo', max: 30 },
-                    { title: "Fast", rate: 500, color: 'tomato', max: 120 },
-                    { title: "Defaults" }
+                    { title: "Slow", color: 'indigo', rate: 2000, max: 30 },
+                    { title: "Fast", color: 'tomato', rate: 500, max: 120 },
+                    { title: "Hyper", rate: 15, max: 1200 },
+                    { title: "Crawl", rate: 9000, max: 9 }
                 ]
             }
         }
