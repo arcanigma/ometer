@@ -1,17 +1,21 @@
 <template>
     <div class="meter">
         <div class="header">{{ title }}</div>
-        <div class="mid-header">
-            <button v-on:click="increment(10)">+10</button>
-        </div>
         <div class="middle">
             <div class="odometer" :style="{ '--duration': `${rate}ms`, '--color': color }" />
         </div>
-        <div class="mid-footer">
-            <button v-on:click="decrement(10)">–10</button>
+        <div class="buttons">
+            <v-btn icon v-on:click="decrement(10)">
+                <v-icon v-if="targetValue < displayValue">mdi-minus-circle</v-icon>
+                <v-icon v-else>mdi-minus-circle-outline</v-icon>
+            </v-btn>
+            <v-btn icon :dark="false" v-on:click="increment(10)">
+                <v-icon v-if="targetValue > displayValue">mdi-plus-circle</v-icon>
+                <v-icon v-else>mdi-plus-circle-outline</v-icon>
+            </v-btn>
         </div>
-        <div class="footer bad" v-if="targetValue < displayValue">down to {{ targetValue }}</div>
-        <div class="footer good" v-else-if="targetValue > displayValue">up to {{ targetValue }}</div>
+        <div class="footer" v-if="targetValue < displayValue">down to {{ targetValue }}</div>
+        <div class="footer" v-else-if="targetValue > displayValue">up to {{ targetValue }}</div>
         <div class="footer" v-else>max {{ max }}</div>
     </div>
 </template>
@@ -89,34 +93,11 @@
 
     .header {
         font-size: 4em;
-    }
-
-    .mid-header {
-    }
-
-    .middle {
-    }
-
-    .mid-footer {
+        line-height: 1em;
     }
 
     .footer {
         font-size: 1.5em;
-        margin-top: .5em;
-    }
-
-    .bad {
-        text-decoration: underline;
-        text-decoration-thickness: .1em;
-        text-underline-offset: .1em;
-        text-decoration-color: #F00;
-    }
-
-    .good {
-        text-decoration: underline;
-        text-decoration-thickness: .1em;
-        text-underline-offset: .1em;
-        text-decoration-color: #0F0;
     }
 
     .odometer .odometer-inside .odometer-digit {
