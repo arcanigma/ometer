@@ -1,7 +1,7 @@
 <template>
     <div id="dashboard">
-        <div class="dash" v-for="(m, i) of meters" :key="i">
-            <Meter class="mx-8" v-bind="m" />
+        <div class="dash" v-for="(meter, index) of meters" :key="index">
+            <Meter class="mx-8" v-bind="meter" />
         </div>
     </div>
 </template>
@@ -13,12 +13,14 @@
         components: {
             Meter
         },
+
         data() {
             return {
                 meters: [
-                    { title: "Realtime", max: 60 },
-                    { title: "Halved", color: 'indigo', rate: 2000, max: 30 },
-                    { title: "Doubled", color: 'tomato', rate: 500, max: 120 }
+                    { title: "Ness",    color: 'red',       max: 120 },
+                    { title: "Paula",   color: 'pink',      max: 45 },
+                    { title: "Jeff",    color: 'slategray', max: 90 },
+                    { title: "Poo",     color: 'navy',      max: 60 }
                 ]
             }
         }
