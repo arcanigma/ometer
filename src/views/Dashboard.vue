@@ -1,6 +1,8 @@
 <template>
     <div id="dashboard">
-        <Meter v-for="(meter, index) of meters" :key="index" v-bind="meter" />
+        <div class="dash" v-for="(m, i) of meters" :key="i">
+            <Meter v-bind="m" />
+        </div>
     </div>
 </template>
 
@@ -24,7 +26,7 @@
 </script>
 
 <style>
-    #dashboard {
-        display: inline;
+    .dash {
+        display: inline-block;
     }
 </style>

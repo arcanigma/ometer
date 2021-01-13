@@ -1,12 +1,19 @@
 <template>
-    <div class="odometer" :style="{
-        '--duration':   `${rate}ms`,
-        '--above': `&quot;${title}&quot;`,
-        '--color': color,
-        '--below-static': `&quot;max ${max}&quot;`,
-        '--below-down': `&quot;down to ${targetValue}&quot;`,
-        '--below-up': `&quot;up to ${targetValue}&quot;`
-    }" />
+    <div class="meter">
+        <div class="header">{{ title }}</div>
+        <div class="mid-header">
+            <button v-on:click="increment(10)">+10</button>
+        </div>
+        <div class="middle">
+            <div class="odometer" :style="{ '--duration': `${rate}ms`, '--color': color }" />
+        </div>
+        <div class="mid-footer">
+            <button v-on:click="decrement(10)">–10</button>
+        </div>
+        <div class="footer bad" v-if="targetValue < displayValue">down to {{ targetValue }}</div>
+        <div class="footer good" v-else-if="targetValue > displayValue">up to {{ targetValue }}</div>
+        <div class="footer" v-else>max {{ max }}</div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -35,15 +42,13 @@
 
         mounted() {
             this.od = new Odometer({
-                el: this.$el,
+                el: this.$el.getElementsByClassName('odometer')[0],
                 value: this.displayValue + this.offset,
                 format: `(,${'d'.repeat(this.digits)})`,
                 duration: this.rate
             });
 
             this.roll();
-
-            this.decrement(30);
         },
 
         methods: {
@@ -76,33 +81,38 @@
 </script>
 
 <style>
-    .odometer .odometer-inside::before {
-        content: var(--above);
-        font-size: .75em;
+    .meter {
+        font-family: "Economica", sans-serif;
         display: grid;
+        margin: 1em;
     }
 
-    .odometer .odometer-inside::after {
-        content: var(--below);
-        font-size: .3em;
-        display: grid;
+    .header {
+        font-size: 4em;
+    }
+
+    .mid-header {
+    }
+
+    .middle {
+    }
+
+    .mid-footer {
+    }
+
+    .footer {
+        font-size: 1.5em;
         margin-top: .5em;
     }
 
-    .odometer .odometer-inside::after {
-        content: var(--below-static);
-    }
-
-    .odometer.odometer-animating-down .odometer-inside::after {
-        content: var(--below-down) !important;
+    .bad {
         text-decoration: underline;
         text-decoration-thickness: .1em;
         text-underline-offset: .1em;
         text-decoration-color: #F00;
     }
 
-    .odometer.odometer-animating-up .odometer-inside::after {
-        content: var(--below-up) !important;
+    .good {
         text-decoration: underline;
         text-decoration-thickness: .1em;
         text-underline-offset: .1em;
@@ -121,7 +131,7 @@
 
     .odometer {
         font-size: 5em;
-        margin: .25em;
+        margin: .15em;
     }
 
     .odometer .odometer-inside .odometer-digit:first-child,
