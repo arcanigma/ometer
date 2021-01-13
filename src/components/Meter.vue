@@ -31,7 +31,7 @@
             <div class="odometer" ref="attach"
                 :style="{
                     '--duration': `${pace}ms`,
-                    '--color': color
+                    '--color': colorize()
                 }"
             />
         </div>
@@ -71,13 +71,15 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import interpolate from 'color-interpolate';
     import Odometer from 'odometer';
     import 'odometer/themes/odometer-theme-train-station.css';
+
+    const PALETTE = interpolate([ '#E66100', '#777777', '#5D3A9B' ]);
 
     export default Vue.extend({
         props: {
             name: { type: String, default: 'New' },
-            color: { type: String, default: '#111' },
             max: { type: Number, default: 255 },
             start: { type: Number },
             interval: { type: Number, default: 1000 }
@@ -167,6 +169,10 @@
                 if (this.rename.length === 0) {
                     this.$emit('drop');
                 }
+            },
+
+            colorize() {
+                return PALETTE(this.display / this.max);
             }
         }
     })
