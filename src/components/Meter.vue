@@ -1,7 +1,10 @@
 <template>
     <div class="meter">
         <div class="header">
-            <v-text-field solo flat placeholder="Name" class="shrink" v-model="title" />
+            <v-text-field solo flat placeholder="Name" class="shrink"
+                v-model="rename"
+                v-on:change="renamed()"
+            />
         </div>
         <div class="left">
             <v-btn small icon v-on:click="goto(max)">
@@ -25,7 +28,7 @@
             </v-btn>
         </div>
         <div class="central">
-            <div class="odometer"
+            <div class="odometer" ref="attach"
                 :style="{
                     '--duration': `${pace}ms`,
                     '--color': color
@@ -73,15 +76,17 @@
 
     export default Vue.extend({
         props: {
-            interval: { type: Number, default: 1000 },
-            title: { type: String, default: 'Counter' },
+            name: { type: String, default: 'New' },
             color: { type: String, default: '#111' },
             max: { type: Number, default: 255 },
             start: { type: Number },
+            interval: { type: Number, default: 1000 }
         },
 
         data() {
             return {
+                rename: this.name,
+
                 digits: Math.floor(Math.log10(this.max)) + 1,
                 offset: 10 ** (Math.floor(Math.log10(this.max)) + 1),
 
@@ -93,13 +98,13 @@
                 slow: this.interval * 2,
                 fast: Math.round(this.interval / 2),
 
-                od: Odometer
+                od: Odometer,
             };
         },
 
         mounted() {
             this.od = new Odometer({
-                el: this.$el.getElementsByClassName('odometer')[0],
+                el: this.$refs.attach,
                 value: this.display + this.offset,
                 format: `(,${'d'.repeat(this.digits)})`,
                 duration: this.pace
@@ -156,6 +161,12 @@
                     this.pace = this.fast;
                 else
                     this.pace = this.interval;
+            },
+
+            renamed() {
+                if (this.rename.length === 0) {
+                    this.$emit('drop');
+                }
             }
         }
     })
