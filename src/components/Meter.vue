@@ -1,6 +1,8 @@
 <template>
     <div class="meter">
-        <div class="header">{{ title }}</div>
+        <div class="header">
+            <v-text-field solo flat placeholder="Name" class="shrink" v-model="title" />
+        </div>
         <div class="left">
             <v-btn small icon v-on:click="goto(max)">
                 <v-icon v-if="target == max">mdi-alpha-m-circle</v-icon>
@@ -176,37 +178,39 @@
 
     .header {
         grid-area: H;
+        height: 5em;
+    }
+
+    .header .v-input input {
+        max-height: unset;
+        width: 0;
+        text-align: center;
         font-size: 4em;
-        line-height: 1em;
     }
 
-    .left {
-        grid-area: L;
+    .left { grid-area: L; }
+    .central { grid-area: C; }
+    .right { grid-area: R; }
+
+    .left, .right {
         margin: auto;
     }
 
-    .central {
-        grid-area: C;
-    }
+    .footer-left { grid-area: FL; }
+    .footer { grid-area: F; }
+    .footer-right { grid-area: FR; }
 
-    .right {
-        grid-area: R;
-        margin: auto;
-    }
-
-    .footer-left {
-        grid-area: FL;
+    .footer-left, .footer, .footer-right {
         font-size: 1.5em;
     }
 
-    .footer {
-        grid-area: F;
-        font-size: 1.5em;
+    .odometer {
+        font-size: 5em;
+        margin: .15em;
     }
 
-    .footer-right {
-        grid-area: FR;
-        font-size: 1.5em;
+    .odometer-inside {
+        display: inline-flex;
     }
 
     .odometer .odometer-inside .odometer-digit {
@@ -217,11 +221,6 @@
             #111 55%,
             var(--color) 100%
         )
-    }
-
-    .odometer {
-        font-size: 5em;
-        margin: .15em;
     }
 
     .odometer .odometer-inside .odometer-digit:first-child,
