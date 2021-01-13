@@ -5,11 +5,15 @@
             <div class="odometer" :style="{ '--duration': `${rate}ms`, '--color': color }" />
         </div>
         <div class="buttons">
-            <v-btn icon v-on:click="decrement(10)">
+            <v-btn large icon class="mr-2" v-on:click="decrement(10)">
                 <v-icon v-if="targetValue < displayValue">mdi-minus-circle</v-icon>
                 <v-icon v-else>mdi-minus-circle-outline</v-icon>
             </v-btn>
-            <v-btn icon :dark="false" v-on:click="increment(10)">
+            <v-btn large icon :dark="false" v-on:click="freeze()">
+                <v-icon v-if="targetValue == displayValue">mdi-stop-circle</v-icon>
+                <v-icon v-else>mdi-stop-circle-outline</v-icon>
+            </v-btn>
+            <v-btn large icon class="ml-2" :dark="false" v-on:click="increment(10)">
                 <v-icon v-if="targetValue > displayValue">mdi-plus-circle</v-icon>
                 <v-icon v-else>mdi-plus-circle-outline</v-icon>
             </v-btn>
@@ -79,6 +83,10 @@
                 this.targetValue += by;
                 if (this.targetValue > this.max)
                     this.targetValue = this.max;
+            },
+
+            freeze() {
+                this.targetValue = this.displayValue;
             }
         }
     })
