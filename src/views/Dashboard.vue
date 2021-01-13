@@ -1,7 +1,7 @@
 <template>
     <div id="dashboard">
         <div class="dash" v-for="(m, i) of meters" :key="i">
-            <Meter v-bind="m" />
+            <Meter class="mx-8" v-bind="m" />
         </div>
     </div>
 </template>

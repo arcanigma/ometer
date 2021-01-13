@@ -1,25 +1,48 @@
 <template>
     <div class="meter">
         <div class="header">{{ title }}</div>
-        <div class="middle">
+        <div class="left">
+            <v-btn small icon :dark="false" v-on:click="goto(max)">
+                <v-icon v-if="target == max">mdi-alpha-m-circle</v-icon>
+                <v-icon v-else>mdi-alpha-m-circle-outline</v-icon>
+            </v-btn>
+            <br/>
+            <v-btn small icon :dark="false" v-on:click="goto(half)">
+                <v-icon v-if="target == half">mdi-alpha-h-circle</v-icon>
+                <v-icon v-else>mdi-alpha-h-circle-outline</v-icon>
+            </v-btn>
+            <br/>
+            <v-btn small icon :dark="false" v-on:click="goto(1)">
+                <v-icon v-if="target == 1">mdi-numeric-1-circle</v-icon>
+                <v-icon v-else>mdi-numeric-1-circle-outline</v-icon>
+            </v-btn>
+            <br/>
+            <v-btn small icon v-on:click="goto(0)">
+                <v-icon v-if="target == 0">mdi-numeric-0-circle</v-icon>
+                <v-icon v-else>mdi-numeric-0-circle-outline</v-icon>
+            </v-btn>
+        </div>
+        <div class="central">
             <div class="odometer" :style="{ '--duration': `${rate}ms`, '--color': color }" />
         </div>
-        <div class="buttons">
-            <v-btn large icon class="mr-2" v-on:click="decrement(10)">
-                <v-icon v-if="targetValue < displayValue">mdi-minus-circle</v-icon>
-                <v-icon v-else>mdi-minus-circle-outline</v-icon>
-            </v-btn>
-            <v-btn large icon :dark="false" v-on:click="freeze()">
-                <v-icon v-if="targetValue == displayValue">mdi-stop-circle</v-icon>
-                <v-icon v-else>mdi-stop-circle-outline</v-icon>
-            </v-btn>
-            <v-btn large icon class="ml-2" :dark="false" v-on:click="increment(10)">
-                <v-icon v-if="targetValue > displayValue">mdi-plus-circle</v-icon>
+        <div class="right">
+            <v-btn large icon :dark="false" v-on:click="inc(10)">
+                <v-icon v-if="target > display">mdi-plus-circle</v-icon>
                 <v-icon v-else>mdi-plus-circle-outline</v-icon>
             </v-btn>
+            <br/>
+            <v-btn large icon :dark="false" v-on:click="goto(display)">
+                <v-icon v-if="target == display">mdi-stop-circle</v-icon>
+                <v-icon v-else>mdi-stop-circle-outline</v-icon>
+            </v-btn>
+            <br/>
+            <v-btn large icon v-on:click="dec(10)">
+                <v-icon v-if="target < display">mdi-minus-circle</v-icon>
+                <v-icon v-else>mdi-minus-circle-outline</v-icon>
+            </v-btn>
         </div>
-        <div class="footer" v-if="targetValue < displayValue">down to {{ targetValue }}</div>
-        <div class="footer" v-else-if="targetValue > displayValue">up to {{ targetValue }}</div>
+        <div class="footer" v-if="target < display">down to {{ target }}</div>
+        <div class="footer" v-else-if="target > display">up to {{ target }}</div>
         <div class="footer" v-else>max {{ max }}</div>
     </div>
 </template>
@@ -42,8 +65,9 @@
             return {
                 digits: Math.floor(Math.log10(this.max)) + 1,
                 offset: 10 ** (Math.floor(Math.log10(this.max)) + 1),
-                targetValue: Math.max(this.start ?? this.max, 0),
-                displayValue: Math.max(this.start ?? this.max, 0),
+                target: Math.max(this.start ?? this.max, 0),
+                display: Math.max(this.start ?? this.max, 0),
+                half: Math.round(this.max/2),
                 od: Odometer
             };
         },
@@ -51,7 +75,7 @@
         mounted() {
             this.od = new Odometer({
                 el: this.$el.getElementsByClassName('odometer')[0],
-                value: this.displayValue + this.offset,
+                value: this.display + this.offset,
                 format: `(,${'d'.repeat(this.digits)})`,
                 duration: this.rate
             });
@@ -63,30 +87,30 @@
             roll() {
                 // TODO support realtime counting
                 setInterval(() => {
-                    if (this.targetValue < this.displayValue)
-                        this.displayValue--;
-                    else if (this.targetValue > this.displayValue)
-                        this.displayValue++;
+                    if (this.target < this.display)
+                        this.display--;
+                    else if (this.target > this.display)
+                        this.display++;
                     else
                         return;
-                    this.od.update(this.displayValue + this.offset);
+                    this.od.update(this.display + this.offset);
                 }, this.rate);
             },
 
-            decrement(by = 1) {
-                this.targetValue -= by;
-                if (this.targetValue < 0)
-                    this.targetValue = 0;
+            dec(by = 1) {
+                this.target -= by;
+                if (this.target < 0)
+                    this.target = 0;
             },
 
-            increment(by = 1) {
-                this.targetValue += by;
-                if (this.targetValue > this.max)
-                    this.targetValue = this.max;
+            inc(by = 1) {
+                this.target += by;
+                if (this.target > this.max)
+                    this.target = this.max;
             },
 
-            freeze() {
-                this.targetValue = this.displayValue;
+            goto(at: number) {
+                this.target = at;
             }
         }
     })
@@ -97,14 +121,38 @@
         font-family: "Economica", sans-serif;
         display: grid;
         margin: 1em;
+
+        grid-template-columns: 1fr auto 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 0px 0px;
+        grid-template-areas:
+            "H H H"
+            "L C R"
+            "F F F";
     }
 
     .header {
+        grid-area: H;
         font-size: 4em;
         line-height: 1em;
     }
 
+    .left {
+        grid-area: L;
+        margin: auto;
+    }
+
+    .central {
+        grid-area: C;
+    }
+
+    .right {
+        grid-area: R;
+        margin: auto;
+    }
+
     .footer {
+        grid-area: F;
         font-size: 1.5em;
     }
 
