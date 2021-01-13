@@ -1,0 +1,6 @@
+[
+    { "name": "Ness",  "max": 120 },
+    { "name": "Paula", "max": 45 },
+    { "name": "Jeff",  "max": 90 },
+    { "name": "Poo",   "max": 60 }
+]

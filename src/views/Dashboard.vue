@@ -13,6 +13,7 @@
 
 <script lang="ts">
     import Meter from '@/components/Meter.vue';
+    import json from '@/assets/data.json';
 
     export default {
         components: {
@@ -21,12 +22,7 @@
 
         data() {
             return {
-                meters: [
-                    { title: "Ness",    color: 'red',       max: 120 },
-                    { title: "Paula",   color: 'pink',      max: 45 },
-                    { title: "Jeff",    color: 'slategray', max: 90 },
-                    { title: "Poo",     color: 'navy',      max: 60 }
-                ]
+                meters: json
             }
         }
     }
