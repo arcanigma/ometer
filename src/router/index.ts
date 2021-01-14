@@ -1,6 +1,6 @@
+import DashBoard from '@/views/DashBoard.vue';
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import DashBoard from '../views/DashBoard.vue';
 
 Vue.use(VueRouter);
 
@@ -14,7 +14,7 @@ const routes: Array<RouteConfig> = [
     //     path: '/setup',
     //     name: 'Setup',
     //     component: () => import(
-    //         /* webpackChunkName: "setup" */ '../views/Setup.vue'
+    //         /* webpackChunkName: "setup" */ '@/views/Setup.vue'
     //     )
     // }
 ];

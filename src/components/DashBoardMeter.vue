@@ -1,22 +1,22 @@
 <template>
     <div class="meter">
         <div class="header-left">
-            <v-text-field outlined hide-details placeholder="Max"
-                label="Max"
-                v-model.lazy.number="remax"
-                @change="remaxed()"
+            <v-text-field outlined hide-details placeholder="Limit"
+                label="Limit"
+                :value="limit"
+                @change="relimit(...arguments)"
             />
         </div>
         <div class="header">
             <v-text-field solo flat hide-details placeholder="Name"
-                v-model.lazy.trim="rename"
-                @change="renamed()"
+                :value="name"
+                @change="rename(...arguments)"
             />
         </div>
         <div class="header-right" />
         <div class="left">
-            <v-btn icon @click="goto(remax)">
-                <v-icon v-if="target == remax">mdi-alpha-m-circle</v-icon>
+            <v-btn icon @click="goto(limit)">
+                <v-icon v-if="target == limit">mdi-alpha-m-circle</v-icon>
                 <v-icon v-else>mdi-alpha-m-circle-outline</v-icon>
             </v-btn>
             <br/>
@@ -38,13 +38,13 @@
         <div class="central">
             <div class="odometer" ref="attach"
                 :style="{
-                    '--duration': `${pace}ms`,
+                    '--duration': `${duration}ms`,
                     '--color': color
                 }"
             />
         </div>
         <div class="right">
-            <v-btn x-large icon @click="inc(unit)">
+            <v-btn x-large icon @click="inc(UNIT)">
                 <v-icon v-if="target > display">mdi-plus-circle</v-icon>
                 <v-icon v-else>mdi-plus-circle-outline</v-icon>
             </v-btn>
@@ -54,14 +54,14 @@
                 <v-icon v-else>mdi-stop-circle-outline</v-icon>
             </v-btn>
             <br/>
-            <v-btn x-large icon @click="dec(unit)">
+            <v-btn x-large icon @click="dec(UNIT)">
                 <v-icon v-if="target < display">mdi-minus-circle</v-icon>
                 <v-icon v-else>mdi-minus-circle-outline</v-icon>
             </v-btn>
         </div>
         <div class="footer-left">
             <v-btn icon @click="slower()">
-                <v-icon v-if="pace == slow">mdi-rewind</v-icon>
+                <v-icon v-if="pace > 1">mdi-rewind</v-icon>
                 <v-icon v-else>mdi-rewind-outline</v-icon>
             </v-btn>
         </div>
@@ -69,7 +69,7 @@
         <div class="footer" v-else-if="target > display">up to {{ target }}</div>
         <div class="footer-right">
             <v-btn icon @click="faster()">
-                <v-icon v-if="pace == fast">mdi-fast-forward</v-icon>
+                <v-icon v-if="pace < 1">mdi-fast-forward</v-icon>
                 <v-icon v-else>mdi-fast-forward-outline</v-icon>
             </v-btn>
         </div>
@@ -82,58 +82,57 @@
     import Odometer from 'odometer';
     import Vue from 'vue';
 
-    const PALETTE = interpolate([ '#E66100', '#777777', '#5D3A9B' ]),
-        INTERVAL = 1000,
-        UNIT = 30,
-        DIGITS = 3,
-        OFFSET = 10 ** DIGITS;
-
     const clamp = (num: number, min: number, max: number) =>
         Math.min(Math.max(num, min), max);
 
     export default Vue.extend({
         props: {
-            name: { type: String, default: 'New' },
-            max: { type: Number, default: 60 }
+            name: { type: String, required: true },
+            limit: { type: Number, required: true }
         },
 
         data() {
-            const start = clamp(this.max, 1, 999);
-
             return {
-                rename: this.name,
-
-                remax: start,
-                target: start,
-                display: start,
-
-                unit: UNIT,
-
-                pace: INTERVAL,
-                slow: INTERVAL * 2,
-                fast: Math.round(INTERVAL / 2),
+                target: this.limit,
+                display: this.limit,
+                pace: 1,
 
                 od: Odometer
             };
         },
 
         computed: {
-            half(): number { return Math.round(this.remax / 2); },
-            color(): string { return PALETTE(this.display / this.remax); }
+            PALETTE: () => interpolate([ '#E66100', '#777777', '#5D3A9B' ]),
+            INTERVAL: () => 1000,
+            UNIT: () => 30,
+            DIGITS: () => 3,
+            OFFSET: () => 10 ** 3,
+
+            color(): string { return this.PALETTE(this.display / this.limit) },
+            duration(): number { return Math.round(this.pace * this.INTERVAL) },
+            half(): number { return Math.round(this.limit / 2) }
         },
 
         watch: {
-            display(value) {
-                this.od.update(value + OFFSET);
+            display(value: number) {
+                this.od.update(value + this.OFFSET);
+            },
+
+            limit(value: number) {
+                if (this.target > value)
+                    this.target = value;
+
+                if (this.display > value)
+                    this.display = value;
             }
         },
 
         mounted() {
             this.od = new Odometer({
                 el: this.$refs.attach,
-                value: this.display + OFFSET,
-                format: `(,${'d'.repeat(DIGITS)})`,
-                duration: INTERVAL
+                value: this.display + this.OFFSET,
+                format: `(,${'d'.repeat(this.DIGITS)})`,
+                duration: this.duration
             });
 
             this.roll();
@@ -149,13 +148,13 @@
                         this.display++;
 
                     this.roll();
-                }, this.pace);
+                }, this.duration);
             },
 
             inc(by = 1) {
                 this.target += by;
-                if (this.target > this.remax)
-                    this.target = this.remax;
+                if (this.target > this.limit)
+                    this.target = this.limit;
             },
 
             dec(by = 1) {
@@ -169,32 +168,31 @@
             },
 
             slower() {
-                if (this.pace == INTERVAL)
-                    this.pace = this.slow;
+                if (this.pace == 1)
+                    this.pace = 2;
                 else
-                    this.pace = INTERVAL;
+                    this.pace = 1;
             },
 
             faster() {
-                if (this.pace == INTERVAL)
-                    this.pace = this.fast;
+                if (this.pace == 1)
+                    this.pace = 0.5;
                 else
-                    this.pace = INTERVAL;
+                    this.pace = 1;
             },
 
-            renamed() {
-                if (this.rename.length === 0)
+            rename(to: string) {
+                to = to.trim();
+                if (to.length == 0)
                     this.$emit('drop');
+                else
+                    this.$emit('rename', to);
             },
 
-            remaxed() {
-                this.remax = clamp(this.remax, 1, 999);
-
-                if (this.target > this.remax)
-                    this.target = this.remax
-
-                if (this.display > this.remax)
-                    this.display = this.remax;
+            relimit(to: number) {
+                to = clamp(to, 1, 999);
+                if (to != this.limit)
+                    this.$emit('relimit', to);
             }
         }
     })
