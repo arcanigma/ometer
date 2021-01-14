@@ -25,6 +25,10 @@
 </script>
 
 <style>
+    body {
+        overflow: hidden;
+    }
+
     #app {
         text-align: center;
     }
