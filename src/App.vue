@@ -12,6 +12,18 @@
     </v-app>
 </template>
 
+<script lang="ts">
+    import Vue from 'vue';
+
+    export default Vue.extend({
+        mounted() {
+            const darkMode = localStorage.getItem('dark-mode');
+            if (darkMode)
+                this.$vuetify.theme.dark = JSON.parse(darkMode);
+        }
+    })
+</script>
+
 <style>
     #app {
         text-align: center;

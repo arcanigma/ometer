@@ -44,6 +44,7 @@
 
             theme() {
                 this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+                localStorage.setItem('dark-mode', JSON.stringify(this.$vuetify.theme.dark));
             }
         }
     })
