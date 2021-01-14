@@ -1,10 +1,10 @@
 <template>
-    <div id="dashboard">
+    <div>
         <div class="dash" v-for="(meter, index) of meters" :key="meter.name">
-            <Meter v-bind="meter" v-on:drop="drop(index)" />
+            <dash-board-meter v-bind="meter" @drop="drop(index)" />
         </div>
-        <div class="tools">
-            <v-btn x-large icon v-on:click="add()">
+        <div>
+            <v-btn x-large icon @click="add()">
                 <v-icon>mdi-view-grid-plus</v-icon>
             </v-btn>
             <v-btn x-large icon @click="theme()">
@@ -17,11 +17,11 @@
 <script lang="ts">
     import Vue from 'vue';
     import json from '@/assets/data.json';
-    import Meter from '@/components/Meter.vue';
+    import DashBoardMeter from '@/components/DashBoardMeter.vue';
 
     export default Vue.extend({
         components: {
-            Meter
+            DashBoardMeter
         },
 
         data() {

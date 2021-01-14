@@ -1,6 +1,6 @@
 [
-    { "name": "Ness",  "max": 120 },
-    { "name": "Paula", "max": 45 },
-    { "name": "Jeff",  "max": 90 },
+    { "name": "Ness",  "max": 60 },
+    { "name": "Paula", "max": 60 },
+    { "name": "Jeff",  "max": 60 },
     { "name": "Poo",   "max": 60 }
 ]
