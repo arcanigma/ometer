@@ -258,6 +258,15 @@
         display: inline-flex;
     }
 
+    .theme--dark .odometer-inside :not(.odometer-digit:nth-child(4)) {
+        z-index: 2;
+    }
+
+    .theme--dark .odometer-inside .odometer-digit:nth-child(4) {
+        z-index: 1;
+        box-shadow: 0px 0px 2em 1em var(--color);
+    }
+
     .odometer .odometer-inside .odometer-digit {
         background-image: linear-gradient(to bottom,
             #111 0%,
@@ -265,7 +274,7 @@
             #333 55%,
             #111 55%,
             var(--color) 100%
-        )
+        );
     }
 
     .odometer .odometer-inside .odometer-digit:first-child,
