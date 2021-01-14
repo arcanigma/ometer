@@ -15,22 +15,22 @@
         </div>
         <div class="header-right" />
         <div class="left">
-            <v-btn small icon @click="goto(remax)">
+            <v-btn icon @click="goto(remax)">
                 <v-icon v-if="target == remax">mdi-alpha-m-circle</v-icon>
                 <v-icon v-else>mdi-alpha-m-circle-outline</v-icon>
             </v-btn>
             <br/>
-            <v-btn small icon @click="goto(half)">
+            <v-btn icon @click="goto(half)">
                 <v-icon v-if="target == half">mdi-alpha-h-circle</v-icon>
                 <v-icon v-else>mdi-alpha-h-circle-outline</v-icon>
             </v-btn>
             <br/>
-            <v-btn small icon @click="goto(1)">
+            <v-btn icon @click="goto(1)">
                 <v-icon v-if="target == 1">mdi-numeric-1-circle</v-icon>
                 <v-icon v-else>mdi-numeric-1-circle-outline</v-icon>
             </v-btn>
             <br/>
-            <v-btn small icon @click="goto(0)">
+            <v-btn icon @click="goto(0)">
                 <v-icon v-if="target == 0">mdi-numeric-0-circle</v-icon>
                 <v-icon v-else>mdi-numeric-0-circle-outline</v-icon>
             </v-btn>
@@ -44,23 +44,23 @@
             />
         </div>
         <div class="right">
-            <v-btn large icon @click="inc(unit)">
+            <v-btn x-large icon @click="inc(unit)">
                 <v-icon v-if="target > display">mdi-plus-circle</v-icon>
                 <v-icon v-else>mdi-plus-circle-outline</v-icon>
             </v-btn>
             <br/>
-            <v-btn large icon @click="goto(display)">
+            <v-btn x-large icon @click="goto(display)">
                 <v-icon v-if="target == display">mdi-stop-circle</v-icon>
                 <v-icon v-else>mdi-stop-circle-outline</v-icon>
             </v-btn>
             <br/>
-            <v-btn large icon @click="dec(unit)">
+            <v-btn x-large icon @click="dec(unit)">
                 <v-icon v-if="target < display">mdi-minus-circle</v-icon>
                 <v-icon v-else>mdi-minus-circle-outline</v-icon>
             </v-btn>
         </div>
         <div class="footer-left">
-            <v-btn small icon @click="slower()">
+            <v-btn icon @click="slower()">
                 <v-icon v-if="pace == slow">mdi-rewind</v-icon>
                 <v-icon v-else>mdi-rewind-outline</v-icon>
             </v-btn>
@@ -68,7 +68,7 @@
         <div class="footer" v-if="target < display">down to {{ target }}</div>
         <div class="footer" v-else-if="target > display">up to {{ target }}</div>
         <div class="footer-right">
-            <v-btn small icon @click="faster()">
+            <v-btn icon @click="faster()">
                 <v-icon v-if="pace == fast">mdi-fast-forward</v-icon>
                 <v-icon v-else>mdi-fast-forward-outline</v-icon>
             </v-btn>
