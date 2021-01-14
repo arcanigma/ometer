@@ -7,6 +7,9 @@
             <v-btn x-large icon v-on:click="add()">
                 <v-icon>mdi-view-grid-plus</v-icon>
             </v-btn>
+            <v-btn x-large icon @click="theme()">
+                <v-icon>mdi-theme-light-dark</v-icon>
+            </v-btn>
         </div>
     </div>
 </template>
@@ -37,6 +40,10 @@
 
             drop(index: number) {
                 this.meters.splice(index, 1)
+            },
+
+            theme() {
+                this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
             }
         }
     })
