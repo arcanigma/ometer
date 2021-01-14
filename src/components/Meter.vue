@@ -1,14 +1,22 @@
 <template>
     <div class="meter">
+        <div class="header-left">
+            <v-text-field outlined hide-details placeholder="Max"
+                label="Max"
+                v-model.lazy.number="limit"
+                v-on:change="remaxed()"
+            />
+        </div>
         <div class="header">
-            <v-text-field solo flat placeholder="Name" class="shrink"
-                v-model="rename"
+            <v-text-field solo flat hide-details placeholder="Name"
+                v-model.lazy.trim="rename"
                 v-on:change="renamed()"
             />
         </div>
+        <div class="header-right" />
         <div class="left">
-            <v-btn small icon v-on:click="goto(max)">
-                <v-icon v-if="target == max">mdi-alpha-m-circle</v-icon>
+            <v-btn small icon v-on:click="goto(limit)">
+                <v-icon v-if="target == limit">mdi-alpha-m-circle</v-icon>
                 <v-icon v-else>mdi-alpha-m-circle-outline</v-icon>
             </v-btn>
             <br/>
@@ -59,7 +67,6 @@
         </div>
         <div class="footer" v-if="target < display">down to {{ target }}</div>
         <div class="footer" v-else-if="target > display">up to {{ target }}</div>
-        <div class="footer" v-else>max {{ max }}</div>
         <div class="footer-right">
             <v-btn small icon v-on:click="faster()">
                 <v-icon v-if="pace == fast">mdi-fast-forward</v-icon>
@@ -80,8 +87,8 @@
     export default Vue.extend({
         props: {
             name: { type: String, default: 'New' },
-            max: { type: Number, default: 255 },
-            start: { type: Number },
+            max: { type: Number, default: 500 },
+            start: { type: Number }, // TODO obsolete
             interval: { type: Number, default: 1000 }
         },
 
@@ -89,12 +96,13 @@
             return {
                 rename: this.name,
 
-                digits: Math.floor(Math.log10(this.max)) + 1,
-                offset: 10 ** (Math.floor(Math.log10(this.max)) + 1),
+                digits: 3,
+                offset: 1000,
 
+                limit: this.max,
+                half: Math.round(this.max / 2),
                 target: Math.max(this.start ?? this.max, 0),
                 display: Math.max(this.start ?? this.max, 0),
-                half: Math.round(this.max / 2),
 
                 pace: this.interval,
                 slow: this.interval * 2,
@@ -137,8 +145,8 @@
 
             inc(by = 1) {
                 this.target += by;
-                if (this.target > this.max)
-                    this.target = this.max;
+                if (this.target > this.limit)
+                    this.target = this.limit;
             },
 
             goto(at: number) {
@@ -166,13 +174,28 @@
             },
 
             renamed() {
-                if (this.rename.length === 0) {
+                if (this.rename.length === 0)
                     this.$emit('drop');
+            },
+
+            remaxed() {
+                if (this.limit < 1)
+                    this.limit = 1;
+                else if (this.limit > 999)
+                    this.limit = 999;
+
+                this.half = Math.round(this.limit / 2);
+
+                if (this.target > this.limit)
+                    this.target = this.limit
+                if (this.display > this.limit) {
+                    this.display = this.limit;
+                    this.update();
                 }
             },
 
             colorize() {
-                return PALETTE(this.display / this.max);
+                return PALETTE(this.display / this.limit);
             }
         }
     })
@@ -188,21 +211,25 @@
         grid-template-rows: auto auto auto;
         gap: 0px 0px;
         grid-template-areas:
-            "H  H  H"
+            "HL H HR"
             "L  C  R"
             "FL F FR";
     }
 
-    .header {
-        grid-area: H;
-        height: 5em;
-    }
+    .header-left { grid-area: HL; }
+    .header { grid-area: H; }
+    .header-right { grid-area: HR; }
 
     .header .v-input input {
-        max-height: unset;
-        width: 0;
+        font-size: 3.25em;
+        width: 3em;
+        max-height: 1em;
+    }
+
+    .header-left .v-input input {
+        font-size: 1.5em;
+        width: 1.5em;
         text-align: center;
-        font-size: 4em;
     }
 
     .left { grid-area: L; }

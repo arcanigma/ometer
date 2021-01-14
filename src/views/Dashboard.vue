@@ -1,7 +1,7 @@
 <template>
     <div id="dashboard">
         <div class="dash" v-for="(meter, index) of meters" :key="meter.name">
-            <Meter class="mx-8" v-bind="meter" v-on:drop="drop(index)" />
+            <Meter v-bind="meter" v-on:drop="drop(index)" />
         </div>
         <div class="tools">
             <v-btn x-large icon v-on:click="add()">
