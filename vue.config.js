@@ -1,10 +1,10 @@
 module.exports = {
     pwa: {
         name: "Ometer",
-        themeColor: "#1E0040",
-        msTileColor: "#F98140",
+        themeColor: "#5D3A9B",
+        msTileColor: "#5D3A9B",
         appleMobileWebAppCapable: "yes",
-        appleMobileWebAppStatusBarStyle: "black",
+        appleMobileWebAppStatusBarStyle: "default",
         workboxPluginMode: "GenerateSW"
     },
     devServer: {

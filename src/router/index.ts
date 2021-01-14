@@ -8,7 +8,10 @@ const routes: Array<RouteConfig> = [
     {
         path: '/',
         name: 'dash-board',
-        component: DashBoard
+        component: DashBoard,
+        meta: {
+            title: 'Ometer'
+        }
     },
     // {
     //     path: '/setup',
@@ -23,6 +26,12 @@ const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
+});
+
+router.afterEach((to, _) => {
+    Vue.nextTick(() => {
+        document.title = to.meta.title;
+    });
 });
 
 export default router;
