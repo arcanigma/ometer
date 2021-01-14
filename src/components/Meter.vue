@@ -3,7 +3,7 @@
         <div class="header-left">
             <v-text-field outlined hide-details placeholder="Max"
                 label="Max"
-                v-model.lazy.number="limit"
+                v-model.lazy.number="remax"
                 v-on:change="remaxed()"
             />
         </div>
@@ -15,8 +15,8 @@
         </div>
         <div class="header-right" />
         <div class="left">
-            <v-btn small icon v-on:click="goto(limit)">
-                <v-icon v-if="target == limit">mdi-alpha-m-circle</v-icon>
+            <v-btn small icon v-on:click="goto(remax)">
+                <v-icon v-if="target == remax">mdi-alpha-m-circle</v-icon>
                 <v-icon v-else>mdi-alpha-m-circle-outline</v-icon>
             </v-btn>
             <br/>
@@ -39,7 +39,7 @@
             <div class="odometer" ref="attach"
                 :style="{
                     '--duration': `${pace}ms`,
-                    '--color': colorize()
+                    '--color': color
                 }"
             />
         </div>
@@ -77,47 +77,60 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import 'odometer/themes/odometer-theme-train-station.css';
     import interpolate from 'color-interpolate';
     import Odometer from 'odometer';
-    import 'odometer/themes/odometer-theme-train-station.css';
+    import Vue from 'vue';
 
-    const PALETTE = interpolate([ '#E66100', '#777777', '#5D3A9B' ]);
+    const PALETTE = interpolate([ '#E66100', '#777777', '#5D3A9B' ]),
+        INTERVAL = 1000,
+        DIGITS = 3,
+        OFFSET = 10 ** DIGITS;
+
+    const clamp = (num: number, min: number, max: number) =>
+        Math.min(Math.max(num, min), max);
 
     export default Vue.extend({
         props: {
             name: { type: String, default: 'New' },
-            max: { type: Number, default: 500 },
-            start: { type: Number }, // TODO obsolete
-            interval: { type: Number, default: 1000 }
+            max: { type: Number, default: 500 }
         },
 
         data() {
+            const start = clamp(this.max, 1, 999);
+
             return {
                 rename: this.name,
 
-                digits: 3,
-                offset: 1000,
+                remax: start,
+                target: start,
+                display: start,
 
-                limit: this.max,
-                half: Math.round(this.max / 2),
-                target: Math.max(this.start ?? this.max, 0),
-                display: Math.max(this.start ?? this.max, 0),
+                pace: INTERVAL,
+                slow: INTERVAL * 2,
+                fast: Math.round(INTERVAL / 2),
 
-                pace: this.interval,
-                slow: this.interval * 2,
-                fast: Math.round(this.interval / 2),
-
-                od: Odometer,
+                od: Odometer
             };
+        },
+
+        computed: {
+            half(): number { return Math.round(this.remax / 2); },
+            color(): string { return PALETTE(this.display / this.remax); }
+        },
+
+        watch: {
+            display(value) {
+                this.od.update(value + OFFSET);
+            }
         },
 
         mounted() {
             this.od = new Odometer({
                 el: this.$refs.attach,
-                value: this.display + this.offset,
-                format: `(,${'d'.repeat(this.digits)})`,
-                duration: this.pace
+                value: this.display + OFFSET,
+                format: `(,${'d'.repeat(DIGITS)})`,
+                duration: INTERVAL
             });
 
             this.roll();
@@ -127,30 +140,19 @@
             roll() {
                 // TODO support realtime counting
                 setTimeout(() => {
-                    if (this.target < this.display) {
+                    if (this.target < this.display)
                         this.display--;
-                        this.update();
-                    }
-                    else if (this.target > this.display) {
+                    else if (this.target > this.display)
                         this.display++;
-                        this.update();
-                    }
+
                     this.roll();
                 }, this.pace);
             },
 
-            update() {
-                this.od.update(this.display + this.offset);
-            },
-
             inc(by = 1) {
                 this.target += by;
-                if (this.target > this.limit)
-                    this.target = this.limit;
-            },
-
-            goto(at: number) {
-                this.target = at;
+                if (this.target > this.remax)
+                    this.target = this.remax;
             },
 
             dec(by = 1) {
@@ -159,18 +161,22 @@
                     this.target = 0;
             },
 
+            goto(at: number) {
+                this.target = at;
+            },
+
             slower() {
-                if (this.pace == this.interval)
+                if (this.pace == INTERVAL)
                     this.pace = this.slow;
                 else
-                    this.pace = this.interval;
+                    this.pace = INTERVAL;
             },
 
             faster() {
-                if (this.pace == this.interval)
+                if (this.pace == INTERVAL)
                     this.pace = this.fast;
                 else
-                    this.pace = this.interval;
+                    this.pace = INTERVAL;
             },
 
             renamed() {
@@ -179,23 +185,13 @@
             },
 
             remaxed() {
-                if (this.limit < 1)
-                    this.limit = 1;
-                else if (this.limit > 999)
-                    this.limit = 999;
+                this.remax = clamp(this.remax, 1, 999);
 
-                this.half = Math.round(this.limit / 2);
+                if (this.target > this.remax)
+                    this.target = this.remax
 
-                if (this.target > this.limit)
-                    this.target = this.limit
-                if (this.display > this.limit) {
-                    this.display = this.limit;
-                    this.update();
-                }
-            },
-
-            colorize() {
-                return PALETTE(this.display / this.limit);
+                if (this.display > this.remax)
+                    this.display = this.remax;
             }
         }
     })

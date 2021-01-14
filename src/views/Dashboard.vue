@@ -13,8 +13,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import Meter from '@/components/Meter.vue';
     import json from '@/assets/data.json';
+    import Meter from '@/components/Meter.vue';
 
     export default Vue.extend({
         components: {
@@ -23,7 +23,7 @@
 
         data() {
             return {
-                meters: json as Record<string, any>,
+                meters: json as { name?: string; max?: number }[],
                 next: json.length + 1
             }
         },
